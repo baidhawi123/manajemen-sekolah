@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Manajemen Data Sekolah</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="w-64 bg-indigo-900 text-white flex flex-col shadow-xl">
+            <div class="p-5 text-xl font-bold tracking-wider border-b border-indigo-800 flex items-center gap-3">
+                <i class="fas fa-school text-indigo-400"></i>
+                <span>EduManage</span>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-800 text-white transition-all font-medium">
+                    <i class="fas fa-th-large w-5 text-center"></i> Dashboard
+                </button>
+                <button onclick="switchTab('siswa')" id="btn-siswa" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-200 hover:bg-indigo-800 hover:text-white transition-all font-medium">
+                    <i class="fas fa-user-graduate w-5 text-center"></i> Data Siswa
+                </button>
+                <button onclick="switchTab('guru')" id="btn-guru" class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-indigo-200 hover:bg-indigo-800 hover:text-white transition-all font-medium">
+                    <i class="fas fa-chalkboard-teacher w-5 text-center"></i> Data Guru
+                </button>
+            </nav>
+            <div class="p-4 border-t border-indigo-800 text-xs text-indigo-300 text-center">
+                Sistem Informasi Sekolah &copy; 2026
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Topbar -->
+            <header class="bg-white shadow-sm border-b px-8 py-4 flex justify-between items-center">
+                <h1 id="page-title" class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                <div class="flex items-center gap-3">
+                    <div class="bg-indigo-100 text-indigo-800 font-semibold px-3 py-1 rounded-full text-sm">
+                        Admin Sekolah
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Body -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-8">
+                
+                <!-- DASHBOARD TAB -->
+                <div id="tab-dashboard" class="tab-content space-y-6">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Siswa</p>
+                                <p id="stat-siswa" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                            </div>
+                            <div class="p-4 bg-blue-50 text-blue-600 rounded-lg text-2xl">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Guru</p>
+                                <p id="stat-guru" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                            </div>
+                            <div class="p-4 bg-emerald-50 text-emerald-600 rounded-lg text-2xl">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Welcome Box -->
+                    <div class="bg-gradient-to-r from-indigo-800 to-indigo-600 text-white p-6 rounded-xl shadow-sm">
+                        <h2 class="text-xl font-bold mb-2">Selamat Datang di EduManage!</h2>
+                        <p class="text-indigo-100 max-w-2xl text-sm leading-relaxed">
+                            Sistem manajemen data sekolah sederhana ini berjalan sepenuhnya di browser Anda memanfaatkan fitur Local Storage. Anda bisa mengelola data siswa dan guru secara mandiri tanpa perlu database eksternal.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- SISWA TAB -->
+                <div id="tab-siswa" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-700">Daftar Seluruh Siswa</h2>
+                        <button onclick="openModal('siswa')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm flex items-center gap-2 transition-all">
+                            <i class="fas fa-plus"></i> Tambah Siswa
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm font-semibold uppercase">
+                                    <tr>
+                                        <th class="p-4">NISN</th>
+                                        <th class="p-4">Nama Siswa</th>
+                                        <th class="p-4">Kelas</th>
+                                        <th class="p-4">Jenis Kelamin</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-siswa-body" class="divide-y divide-gray-100 text-sm text-gray-700">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GURU TAB -->
+                <div id="tab-guru" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-gray-700">Daftar Guru / Tenaga Pengajar</h2>
+                        <button onclick="openModal('guru')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm flex items-center gap-2 transition-all">
+                            <i class="fas fa-plus"></i> Tambah Guru
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm font-semibold uppercase">
+                                    <tr>
+                                        <th class="p-4">NIP</th>
+                                        <th class="p-4">Nama Guru</th>
+                                        <th class="p-4">Mata Pelajaran</th>
+                                        <th class="p-4">Email</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-guru-body" class="divide-y divide-gray-100 text-sm text-gray-700">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL FORM SISWA -->
+    <div id="modal-siswa" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="bg-indigo-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-lg" id="modal-siswa-title">Tambah Data Siswa</h3>
+                <button onclick="closeModal('siswa')" class="text-white/80 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="form-siswa" onsubmit="saveSiswa(event)" class="p-6 space-y-4">
+                <input type="hidden" id="siswa-idx">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">NISN</label>
+                    <input type="text" id="siswa-nisn" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="siswa-nama" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kelas</label>
+                    <select id="siswa-kelas" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Pilih Kelas</option>
+                        <option value="X - IPA">X - IPA</option>
+                        <option value="X - IPS">X - IPS</option>
+                        <option value="XI - IPA">XI - IPA</option>
+                        <option value="XI - IPS">XI - IPS</option>
+                        <option value="XII - IPA">XII - IPA</option>
+                        <option value="XII - IPS">XII - IPS</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                    <div class="flex gap-4 mt-1">
+                        <label class="flex items-center gap-2 text-sm"><input type="radio" name="siswa-jk" value="Laki-laki" checked class="text-indigo-600"> Laki-laki</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="radio" name="siswa-jk" value="Perempuan" class="text-indigo-600"> Perempuan</label>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('siswa')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-all">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium text-sm transition-all">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL FORM GURU -->
+    <div id="modal-guru" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="bg-emerald-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-lg" id="modal-guru-title">Tambah Data Guru</h3>
+                <button onclick="closeModal('guru')" class="text-white/80 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="form-guru" onsubmit="saveGuru(event)" class="p-6 space-y-4">
+                <input type="hidden" id="guru-idx">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">NIP</label>
+                    <input type="text" id="guru-nip" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="guru-nama" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
+                    <input type="text" id="guru-mapel" required placeholder="Contoh: Matematika, Fisika" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="guru-email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('guru')" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium text-sm transition-all">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium text-sm transition-all">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CORE JAVASCRIPT LOGIC -->
+    <script>
+        // Initial Dummy Data if LocalStorage is Empty
+        let dataSiswa = JSON.parse(localStorage.getItem('sekolah_siswa')) || [
+            { nisn: '1234567890', nama: 'Budi Santoso', kelas: 'XII - IPA', jk: 'Laki-laki' },
+            { nisn: '1234567891', nama: 'Siti Aminah', kelas: 'XI - IPS', jk: 'Perempuan' }
+        ];
+
+        let dataGuru = JSON.parse(localStorage.getItem('sekolah_guru')) || [
+            { nip: '198706152010011002', nama: 'Ahmad Subarjo, M.Pd.', mapel: 'Matematika', email: 'ahmad@sekolah.sch.id' },
+            { nip: '199203112015022003', nama: 'Rina Wijaya, S.Si.', mapel: 'Fisika', email: 'rina@sekolah.sch.id' }
+        ];
+
+        // Save back to local storage immediately to ensure initial load works
+        function saveData() {
+            localStorage.setItem('sekolah_siswa', JSON.stringify(dataSiswa));
+            localStorage.setItem('sekolah_guru', JSON.stringify(dataGuru));
+            updateStats();
+        }
+
+        // Tab Switcher
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabName).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-800', 'text-white');
+                btn.classList.add('text-indigo-200', 'hover:bg-indigo-800', 'hover:text-white');
+            });
+
+            const activeBtn = document.getElementById('btn-' + tabName);
+            activeBtn.classList.remove('text-indigo-200', 'hover:bg-indigo-800', 'hover:text-white');
+            activeBtn.classList.add('bg-indigo-800', 'text-white');
+
+            const titles = { dashboard: 'Dashboard Utama', siswa: 'Manajemen Data Siswa', guru: 'Manajemen Data Guru' };
+            document.getElementById('page-title').innerText = titles[tabName];
+            
+            if(tabName === 'siswa') renderSiswa();
+            if(tabName === 'guru') renderGuru();
+        }
+
+        // Update Statistics on Dashboard
+        function updateStats() {
+            document.getElementById('stat-siswa').innerText = dataSiswa.length;
+            document.getElementById('stat-guru').innerText = dataGuru.length;
+        }
+
+        // Modal Management
+        function openModal(type, index = -1) {
+            const modal = document.getElementById(`modal-${type}`);
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+
+            if(type === 'siswa') {
+                document.getElementById('form-siswa').reset();
+                document.getElementById('siswa-idx').value = index;
+                if(index > -1) {
+                    document.getElementById('modal-siswa-title').innerText = 'Edit Data Siswa';
+                    const item = dataSiswa[index];
+                    document.getElementById('siswa-nisn').value = item.nisn;
+                    document.getElementById('siswa-nama').value = item.nama;
+                    document.getElementById('siswa-kelas').value = item.kelas;
+                    document.querySelector(`input[name="siswa-jk"][value="${item.jk}"]`).checked = true;
+                } else {
+                    document.getElementById('modal-siswa-title').innerText = 'Tambah Data Siswa';
+                }
+            } else if(type === 'guru') {
+                document.getElementById('form-guru').reset();
+                document.getElementById('guru-idx').value = index;
+                if(index > -1) {
+                    document.getElementById('modal-guru-title').innerText = 'Edit Data Guru';
+                    const item = dataGuru[index];
+                    document.getElementById('guru-nip').value = item.nip;
+                    document.getElementById('guru-nama').value = item.nama;
+                    document.getElementById('guru-mapel').value = item.mapel;
+                    document.getElementById('guru-email').value = item.email;
+                } else {
+                    document.getElementById('modal-guru-title').innerText = 'Tambah Data Guru';
+                }
+            }
+        }
+
+        function closeModal(type) {
+            const modal = document.getElementById(`modal-${type}`);
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // CRUD SISWA
+        function renderSiswa() {
+            const tbody = document.getElementById('table-siswa-body');
+            if (dataSiswa.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 font-medium"><i class="fas fa-folder-open text-2xl block mb-2"></i> Belum ada data siswa.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = dataSiswa.map((item, idx) => `
+                <tr class="hover:bg-gray-50/80 transition-colors">
+                    <td class="p-4 font-mono font-semibold text-gray-600">${item.nisn}</td>
+                    <td class="p-4 font-medium text-gray-900">${item.nama}</td>
+                    <td class="p-4"><span class="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-md">${item.kelas}</span></td>
+                    <td class="p-4 text-gray-500">${item.jk}</td>
+                    <td class="p-4 flex justify-center gap-2">
+                        <button onclick="openModal('siswa', ${idx})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteSiswa(${idx})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function saveSiswa(e) {
+            e.preventDefault();
+            const idx = document.getElementById('siswa-idx').value;
+            const item = {
+                nisn: document.getElementById('siswa-nisn').value,
+                nama: document.getElementById('siswa-nama').value,
+                kelas: document.getElementById('siswa-kelas').value,
+                jk: document.querySelector('input[name="siswa-jk"]:checked').value
+            };
+
+            if(idx > -1) dataSiswa[idx] = item;
+            else dataSiswa.push(item);
+
+            saveData();
+            renderSiswa();
+            closeModal('siswa');
+        }
+
+        function deleteSiswa(idx) {
+            if(confirm('Apakah Anda yakin ingin menghapus siswa ini?')) {
+                dataSiswa.splice(idx, 1);
+                saveData();
+                renderSiswa();
+            }
+        }
+
+        // CRUD GURU
+        function renderGuru() {
+            const tbody = document.getElementById('table-guru-body');
+            if (dataGuru.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 font-medium"><i class="fas fa-folder-open text-2xl block mb-2"></i> Belum ada data guru.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = dataGuru.map((item, idx) => `
+                <tr class="hover:bg-gray-50/80 transition-colors">
+                    <td class="p-4 font-mono font-semibold text-gray-600">${item.nip}</td>
+                    <td class="p-4 font-medium text-gray-900">${item.nama}</td>
+                    <td class="p-4 text-gray-600">${item.mapel}</td>
+                    <td class="p-4 text-gray-500 font-mono text-xs">${item.email}</td>
+                    <td class="p-4 flex justify-center gap-2">
+                        <button onclick="openModal('guru', ${idx})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteGuru(${idx})" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Hapus"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function saveGuru(e) {
+            e.preventDefault();
+            const idx = document.getElementById('guru-idx').value;
+            const item = {
+                nip: document.getElementById('guru-nip').value,
+                nama: document.getElementById('guru-nama').value,
+                mapel: document.getElementById('guru-mapel').value,
+                email: document.getElementById('guru-email').value
+            };
+
+            if(idx > -1) dataGuru[idx] = item;
+            else dataGuru.push(item);
+
+            saveData();
+            renderGuru();
+            closeModal('guru');
+        }
+
+        function deleteGuru(idx) {
+            if(confirm('Apakah Anda yakin ingin menghapus guru ini?')) {
+                dataGuru.splice(idx, 1);
+                saveData();
+                renderGuru();
+            }
+        }
+
+        // On App Load
+        saveData();
+    </script>
+</body>
+</html>
